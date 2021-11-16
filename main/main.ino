@@ -1,9 +1,11 @@
-void setup() {
-  // put your setup code here, to run once:
 
+void setup() {
+  Serial.begin(9600);
+  buzzerSetup();
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-
+//  halt();
+//  lopen();
+  doorlopen(4);
 }
