@@ -1,0 +1,57 @@
+
+- Buzzer 
+	case STATE_DODE_TIJD:	buzzer_halt()
+        case STATE_WACHT:	buzzer_halt()
+        case STATE_OPENEN:	buzzer_halt()
+        case STATE_OPEN:	buzzer_lopen()
+			Na 3 seconden (helft vd tijd)	buzzer_doorlopen()
+        case STATE_SLUITEN:	buzzer_halt()
+
+- 7segmentedDisplay
+	case STATE_DODE_TIJD:	display_halt()
+        case STATE_WACHT:	
+        case STATE_OPENEN:	
+        case STATE_OPEN:	display_lopen()
+			Na 3 seconden	display_aftellen()
+        case STATE_SLUITEN:	display_halt()
+
+- Slagboom
+	case STATE_DODE_TIJD:	
+        case STATE_WACHT:	
+        case STATE_OPENEN:	slagboom_openen();
+        case STATE_OPEN:	
+        case STATE_SLUITEN:	slagboom_sluiten();
+
+- Stoplicht
+	(If serial command = n)
+	(For each stoplicht this s.m. doorlopen)
+		case STATE_DODE_TIJD:		verkeerslichtOpRood([i]);
+        	case STATE_WACHT:	
+        	case STATE_GROEN_LICHT:		buzzer_halt();
+						verkeerslichtOpGroen([i]);
+		case STATE_ORANJE_LICHT:	buzzer_halt()
+						verkeerslichtOpGeel([i]);
+
+	(If serial command = d)
+	(For each stoplicht this s.m. doorlopen)
+		case STATE_DODE_TIJD:		verkeerslichtOpRood([i]);
+        	case STATE_WACHT:
+		case STATE_ROOD_ORANJE_LICHT:	buzzer_halt();
+						verkeerslichtOpRoodOranje([i]);
+        	case STATE_GROEN_LICHT:		buzzer_halt();
+						verkeerslichtOpGroen([i]);
+		case STATE_ORANJE_LICHT:	buzzer_halt()
+						verkeerslichtOpGeel([i]);
+
+	(If serial command = o)
+	(For each stoplicht this s.m. doorlopen)
+		case STATE_DODE_TIJD:		verkeerslichtOpRood([i]);
+        	case STATE_WACHT:
+		case STATE_ROOD_ORANJE_LICHT:	buzzer_halt();
+						verkeerslichtOpRoodOranje([i]);
+        	case STATE_GROEN_LICHT:		buzzer_halt();
+						verkeerslichtOpGroen([i]);
+        	case STATE_GROEN_KNIPPERLICHT:	buzzer_halt();
+						verkeerslichtOpGroenKnipperen([i]);
+		case STATE_ORANJE_LICHT:	buzzer_halt();
+						verkeerslichtOpGeel([i]);

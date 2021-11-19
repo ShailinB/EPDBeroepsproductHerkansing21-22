@@ -21,7 +21,7 @@ void buzzerSetup() {
   resetBuzzerCount();
 }
 
-void doorlopen(int wantedTicks) {
+void buzzer_doorlopen(int wantedTicks) {
   if (buzzCount >= wantedTicks) {
     noTone(PIN_BUZZER);
     if (timerIsPassed(buzzerTimer, INTERVAL_STILTE_LOPEN)) {
@@ -31,15 +31,15 @@ void doorlopen(int wantedTicks) {
   }
   noTone(PIN_BUZZER);
   if (timerIsPassed(buzzerTimer, INTERVAL_TIK_LOPEN) && buzzCount < wantedTicks) {
-    Serial.print("Tick: ");
-    Serial.println(buzzCount);
+//    Serial.print("Tick: ");
+//    Serial.println(buzzCount);
     tone(PIN_BUZZER, VOLUME);
     buzzCount++;
     buzzerTimer = timerReset();
   }
 }
 
-void halt() {
+void buzzer_halt() {
   noTone(PIN_BUZZER);
   if (timerIsPassed(buzzerTimer, INTERVAL_NIET_LOPEN)) {
     tone(PIN_BUZZER, VOLUME);
@@ -47,7 +47,7 @@ void halt() {
   }
 }
 
-void lopen() {
+void buzzer_lopen() {
   noTone(PIN_BUZZER);
   if (timerIsPassed(buzzerTimer, INTERVAL_LOPEN)) {
     tone(PIN_BUZZER, VOLUME);
