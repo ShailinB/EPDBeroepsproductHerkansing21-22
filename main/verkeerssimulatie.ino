@@ -6,9 +6,10 @@ void vsSetup() {
     ledControlSetup();
     servoSetup();
     shiftRegisterSetup();
-    initTimers();
+    kruispunt_setup();
 }
 
 void vsLoop() {
-    kruispunt();
+  buttonLoop();
+  kruispunt();
 }
