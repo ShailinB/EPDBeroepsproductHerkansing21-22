@@ -6,7 +6,6 @@ int state = 0;
 boolean verzoekOversteken;
 
 // States
-
 const int STATE_DODE_TIJD = 0;
 const int STATE_WACHT = 1;
 const int STATE_OPENEN = 2;
@@ -18,30 +17,62 @@ const int STATE_GROEN_KNIPPERLICHT = 7;
 const int STATE_ORANJE_LICHT = 8;
 
 // Timer dode tijd
-unsigned long prev_dodetijd;
+unsigned long timer_dodetijd;
 const int INTERVAL_DODETIJD = 5000;
 
 // Timer wacht
-unsigned long prev_wacht;
+unsigned long timer_wacht;
 const int INTERVAL_WACHT = 5000;
 
 // Timer openen
-unsigned long prev_openen;
+unsigned long timer_openen;
 const int INTERVAL_OPENEN = 5000;
 
 // Timer openen
-unsigned long prev_open;
+unsigned long timer_open;
 const int INTERVAL_OPEN = 6000;
+
+// Buzzer variables
+const int AMOUNTOFBEEPS = 4;
 
 void kruispunt_setup() {
 
-  // Init timers
-  prev_dodetijd = timerSetup(INTERVAL_DODETIJD);
-  prev_dodetijd = timerReset();
+  // Init timer
+  timer_dodetijd = timerSetup(INTERVAL_DODETIJD);
+  timer_dodetijd = timerReset();
 
   // Init oversteekknop
   verzoekOversteken = false;
 }
+
+// Event trigger conditions =================================================================
+
+// Only when the dead time has passed, the system should listen to events again.
+boolean isSafetyProtocolCompleted() {
+  return timerIsPassed(timer_dodetijd, INTERVAL_DODETIJD);
+}
+
+// Its only allowed/save to cross the road, if barrier is closed and someone requested to cross the road.
+boolean isSafeToCrossRoad() {
+  return verzoekOversteken && isServoClosed();
+}
+
+// Its only save/allowed to start walking, if the barrier has fully opened.
+boolean isSafeToStartWalking() {
+  return isServoOpen();
+}
+
+// Only when the time to cross the road has passed, the barrier should start closing down.
+boolean crossingTimeHasPassed() {
+  return getCurrentNumber() <= -2;
+}
+
+// Only when the barrier has been fully closed again, the crosswalk sequence is fully completed.
+boolean isSequenceCompleted() {
+  return isServoClosed();
+}
+
+// Event trigger conditions ==================================================================
 
 void kruispunt() {
   switch (state) {
@@ -49,7 +80,7 @@ void kruispunt() {
     case STATE_DODE_TIJD:
       state_dode_tijd_do();
 
-      if (timerIsPassed(prev_dodetijd, INTERVAL_DODETIJD)) {
+      if (isSafetyProtocolCompleted()) {
         state_dode_tijd_exit();
         state = STATE_WACHT;
         state_wacht_entry();
@@ -59,7 +90,7 @@ void kruispunt() {
     case STATE_WACHT:
       state_wacht_do();
 
-      if (verzoekOversteken && isServoClosed()) {
+      if (isSafeToCrossRoad()) {
         state_wacht_exit();
         state = STATE_OPENEN;
         state_openen_entry();
@@ -69,7 +100,7 @@ void kruispunt() {
     case STATE_OPENEN:
       state_openen_do();
 
-      if (isServoOpen()) {
+      if (isSafeToStartWalking()) {
         state_openen_exit();
         state = STATE_OPEN;
         state_open_entry();
@@ -79,7 +110,7 @@ void kruispunt() {
     case STATE_OPEN:
       state_open_do();
 
-      if (getCounter() <= -2) {
+      if (crossingTimeHasPassed()) {
         state_open_exit();
         state = STATE_SLUITEN;
         state_sluiten_entry();
@@ -89,7 +120,7 @@ void kruispunt() {
     case STATE_SLUITEN:
       state_sluiten_do();
 
-      if (isServoClosed()) {
+      if (isSequenceCompleted()) {
         state_wacht_exit();
         state = STATE_DODE_TIJD;
         state_dode_tijd_entry();
@@ -104,27 +135,28 @@ void kruispunt() {
   }
 }
 
-// Entry-Do-Exit methods
+// Entry-Do-Exit methods ========================================================
 
 // STATE_DODE_TIJD
 void state_dode_tijd_entry() {
-  prev_dodetijd = timerReset();
+  servoStop();
+  timer_dodetijd = timerReset();
 };
 void state_dode_tijd_do() {
-  displayNietLopen();
+  segmentedDisplay_halt();
   buzzer_halt();
 };
 void state_dode_tijd_exit() {};
 
 // STATE_WACHT
 void state_wacht_entry() {
-  prev_wacht = timerReset();
+  timer_wacht = timerReset();
 };
 void state_wacht_do() {
   if (buttonClicked(getOversteekKnop())) {
     verzoekOversteken = true;
   }
-  displayNietLopen();
+  segmentedDisplay_halt();
   buzzer_halt();
 };
 void state_wacht_exit() {
@@ -133,35 +165,42 @@ void state_wacht_exit() {
 
 // STATE_OPENEN
 void state_openen_entry() {
-  prev_openen = timerReset();
+  servoStart();
+  timer_openen = timerReset();
 };
 void state_openen_do() {
-  displayNietLopen();
+  segmentedDisplay_halt();
   servoOpen();
   buzzer_halt();
 };
-void state_openen_exit() {};
+void state_openen_exit() {
+  servoStop();
+};
 
 // STATE_OPEN
 void state_open_entry() {
-  prev_open = timerReset();
+  timer_open = timerReset();
 };
 void state_open_do() {
-  displayAftellen();
+  segmentedDisplay_aftellen();
   buzzer_lopen();
 };
 void state_open_exit() {
-  resetCounter();  
+  resetCounter();
 };
 
 // STATE_SLUITEN
-void state_sluiten_entry() {};
-void state_sluiten_do() {
-  displayNietLopen();
-  servoClose();
-  buzzer_doorlopen(4);
+void state_sluiten_entry() {
+  servoStart();
 };
-void state_sluiten_exit() {};
+void state_sluiten_do() {
+  segmentedDisplay_halt();
+  servoClose();
+  buzzer_doorlopen(AMOUNTOFBEEPS);
+};
+void state_sluiten_exit() {
+  servoStop();
+};
 
 // STATE_ROOD_ORANJE_LICHT
 void state_rood_oranje_entry() {};
@@ -182,3 +221,5 @@ void state_groen_knipperlicht_exit() {};
 void state_oranje_entry() {};
 void state_oranje_do() {};
 void state_oranje_exit() {};
+
+// Entry-Do-Exit methods ========================================================

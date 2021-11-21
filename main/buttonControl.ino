@@ -93,31 +93,23 @@ const int getOversteekKnop() {
 
 //----------------------------------------------------------------------------
 void button_Released_Entry(int button) {}
-
 void button_Released_Do(int button) {}
-
 void button_Released_Exit(int button) {}
 
 void button_CheckPressed_Entry(int button) {
   buttonTimer[button] = timerReset();
 }
-
 void button_CheckPressed_Do(int button) {}
-
 void button_CheckPressed_Exit(int button) {}
 
 void button_Pressed_Entry(int button) {}
-
 void button_Pressed_Do(int button) {}
-
 void button_Pressed_Exit(int button) {}
 
 void button_CheckReleased_Entry(int button) {
   buttonTimer[button] = timerReset();
 }
-
 void button_CheckReleased_Do(int button) {}
-
 void button_CheckReleased_Exit(int button) {}
 
 //Getters

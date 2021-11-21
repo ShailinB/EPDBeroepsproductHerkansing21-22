@@ -1,57 +1,55 @@
 
 // Buzzer setup
-const int PIN_BUZZER = 12;
-const int VOLUME = 1000000; //KHz
+const int BUZZER_PIN = 12;
+const int VOLUME = 1000;
 
 // Intervals
-const int INTERVAL_TIK_LOPEN = 200;
-const int INTERVAL_STILTE_LOPEN = 1500;
+const int INTERVAL_DOORLOPEN = 200;
+const int INTERVAL_DOORLOPEN_PAUZE = 1500;
 const int INTERVAL_LOPEN = 750;
-const int INTERVAL_NIET_LOPEN = 1.5 * 1000;//1.5sec
+const int INTERVAL_HALT = 1500;
 
 // Timers
-unsigned long buzzerTimer;
+unsigned long timer_buzzer;
 
 // Rhythm variables
 int buzzCount;
 
 void buzzerSetup() {
-  pinMode(PIN_BUZZER, OUTPUT);
-  buzzerTimer = timerSetup(INTERVAL_TIK_LOPEN);
+  pinMode(BUZZER_PIN, OUTPUT);
+  timer_buzzer = timerSetup(INTERVAL_DOORLOPEN);
   resetBuzzerCount();
 }
 
 void buzzer_doorlopen(int wantedTicks) {
   if (buzzCount >= wantedTicks) {
-    noTone(PIN_BUZZER);
-    if (timerIsPassed(buzzerTimer, INTERVAL_STILTE_LOPEN)) {
+    noTone(BUZZER_PIN);
+    if (timerIsPassed(timer_buzzer, INTERVAL_DOORLOPEN_PAUZE)) {
       resetBuzzerCount();
-      buzzerTimer = timerReset();
+      timer_buzzer = timerReset();
     }
   }
-  noTone(PIN_BUZZER);
-  if (timerIsPassed(buzzerTimer, INTERVAL_TIK_LOPEN) && buzzCount < wantedTicks) {
-//    Serial.print("Tick: ");
-//    Serial.println(buzzCount);
-    tone(PIN_BUZZER, VOLUME);
+  noTone(BUZZER_PIN);
+  if (timerIsPassed(timer_buzzer, INTERVAL_DOORLOPEN) && buzzCount < wantedTicks) {
+    tone(BUZZER_PIN, VOLUME);
     buzzCount++;
-    buzzerTimer = timerReset();
+    timer_buzzer = timerReset();
   }
 }
 
 void buzzer_halt() {
-  noTone(PIN_BUZZER);
-  if (timerIsPassed(buzzerTimer, INTERVAL_NIET_LOPEN)) {
-    tone(PIN_BUZZER, VOLUME);
-    buzzerTimer = timerReset();
+  noTone(BUZZER_PIN);
+  if (timerIsPassed(timer_buzzer, INTERVAL_HALT)) {
+    tone(BUZZER_PIN, VOLUME);
+    timer_buzzer = timerReset();
   }
 }
 
 void buzzer_lopen() {
-  noTone(PIN_BUZZER);
-  if (timerIsPassed(buzzerTimer, INTERVAL_LOPEN)) {
-    tone(PIN_BUZZER, VOLUME);
-    buzzerTimer = timerReset();
+  noTone(BUZZER_PIN);
+  if (timerIsPassed(timer_buzzer, INTERVAL_LOPEN)) {
+    tone(BUZZER_PIN, VOLUME);
+    timer_buzzer = timerReset();
   }
 }
 

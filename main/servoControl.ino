@@ -1,31 +1,30 @@
 //Includes
 #include <Servo.h>
 
-//Magic Numbers
+//Pin diagram
+Servo servo;
 const int SERVO_PIN = 11;
+
+//Servo bounds
 const int SERVO_MIN_ANGLE = 0;
 const int SERVO_MAX_ANGLE = 90;
-
-//Variables
-Servo servo;
-//int servoDirection = 1;
 
 //Variables for opening/closing slagboom
 int servoCurrentAngle;
 
 // Timer dode tijd
-unsigned long slagboomTimer;
+unsigned long timer_slagboom;
 const int STEPSPEED = 20;
 
 void servoSetup() {
 
   // Init timers
-  slagboomTimer = timerSetup(STEPSPEED);
-  slagboomTimer = timerReset();
+  timer_slagboom = timerSetup(STEPSPEED);
+  timer_slagboom = timerReset();
 
   servoStart();
   servoWrite(SERVO_MIN_ANGLE);
-//  servoStop();
+  servoStop();
 }
 
 void servoWrite(int angle) {
@@ -49,16 +48,16 @@ boolean isServoClosed() {
 }
 
 void servoOpen() {
-  if (timerIsPassed(slagboomTimer, STEPSPEED)) {
-    slagboomTimer = timerReset();
+  if (timerIsPassed(timer_slagboom, STEPSPEED)) {
+    timer_slagboom = timerReset();
     servoWrite(servoCurrentAngle);
     servoCurrentAngle++;
   }
 }
 
 void servoClose() {
-  if (timerIsPassed(slagboomTimer, STEPSPEED)) {
-    slagboomTimer = timerReset();
+  if (timerIsPassed(timer_slagboom, STEPSPEED)) {
+    timer_slagboom = timerReset();
     servoWrite(servoCurrentAngle);
     servoCurrentAngle--;
   }

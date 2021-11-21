@@ -23,7 +23,6 @@ void ledControlAllLedOff() {
 }
 
 void ledControlSetLedOn (int led) {
-  //  ledControlAllLedOff();
   for (int i = 0; i < LEDPINS_SIZE; i++) {
     if (LEDPINS[i] == led) {
       digitalWrite(LEDPINS[i], HIGH);
@@ -32,7 +31,6 @@ void ledControlSetLedOn (int led) {
 }
 
 void ledControlSetLedOff (int led) {
-  //  ledControlAllLedOn();
   for (int i = 0; i < LEDPINS_SIZE; i++) {
     if (LEDPINS[i] == led) {
       digitalWrite(LEDPINS[i], LOW);
