@@ -1,5 +1,5 @@
-const int BUTTON_COUNT = 1;
-const int BUTTON_PIN[BUTTON_COUNT] = {10};
+const int BUTTON_COUNT = 4;
+const int BUTTON_PIN[BUTTON_COUNT] = {10,9,6,5};
 
 const int BUTTON_STATE_RELEASED = 0;
 const int BUTTON_STATE_CHECK_PRESSED = 1;
@@ -89,6 +89,18 @@ void buttonLoop() {
 //Getters 
 const int getOversteekKnop() {
   return 0;
+}
+
+const int getLinkerStoplicht() {
+  return 3;
+}
+
+const int getRechterStoplicht() {
+  return 2;
+}
+
+const int getTestknop() {
+  return 1;
 }
 
 //----------------------------------------------------------------------------
