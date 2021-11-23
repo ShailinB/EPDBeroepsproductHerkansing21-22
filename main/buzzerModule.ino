@@ -1,4 +1,11 @@
 
+// State
+int buzzerState;
+
+const int STATE_BUZZER_HALT = 0;
+const int STATE_BUZZER_LOPEN = 1;
+const int STATE_BUZZER_DOORLOPEN = 2;
+
 // Buzzer setup
 const int BUZZER_PIN = 12;
 const int VOLUME = 1000;
@@ -22,6 +29,7 @@ void buzzerSetup() {
 }
 
 void buzzer_doorlopen(int wantedTicks) {
+  buzzerState = STATE_BUZZER_DOORLOPEN;
   if (buzzCount >= wantedTicks) {
     noTone(BUZZER_PIN);
     if (timerIsPassed(timer_buzzer, INTERVAL_DOORLOPEN_PAUZE)) {
@@ -38,6 +46,7 @@ void buzzer_doorlopen(int wantedTicks) {
 }
 
 void buzzer_halt() {
+  buzzerState = STATE_BUZZER_HALT;
   noTone(BUZZER_PIN);
   if (timerIsPassed(timer_buzzer, INTERVAL_HALT)) {
     tone(BUZZER_PIN, VOLUME);
@@ -46,6 +55,7 @@ void buzzer_halt() {
 }
 
 void buzzer_lopen() {
+  buzzerState = STATE_BUZZER_LOPEN;
   noTone(BUZZER_PIN);
   if (timerIsPassed(timer_buzzer, INTERVAL_LOPEN)) {
     tone(BUZZER_PIN, VOLUME);
@@ -55,4 +65,10 @@ void buzzer_lopen() {
 
 void resetBuzzerCount() {
   buzzCount = 0;
+}
+
+// Buzzer states
+
+boolean isBuzzerOnHalt() {
+  return buzzerState == STATE_BUZZER_HALT;
 }

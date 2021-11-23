@@ -1,4 +1,11 @@
 
+// State
+int displayState;
+
+const int STATE_DISPLAY_HALT = 0;
+const int STATE_DISPLAY_LOPEN = 1;
+const int STATE_DISPLAY_AFTELLEN = 2;
+
 // Pin diagram
 const int PIN_ST_CP = A1;
 const int PIN_SH_CP = A2;
@@ -73,14 +80,17 @@ void shiftSetAllOff() {
 
 //Oversteek licht functions
 void segmentedDisplay_halt() {
+  displayState = STATE_DISPLAY_HALT;
   shiftSetPattern(FONT_HALT);
 }
 
 void segmentedDisplay_lopen() {
+  displayState = STATE_DISPLAY_LOPEN;
   shiftSetPattern(FONT_LOPEN);
 }
 
 void segmentedDisplay_aftellen() {
+  displayState = STATE_DISPLAY_AFTELLEN;
   if (timerIsPassed(timer_countdown, INTERVAL_COUNTDOWN)) {
     shiftSetPattern(FONTS_AFTELLEN[currentNumber]);
     Serial.println(currentNumber);
@@ -95,4 +105,10 @@ int getCurrentNumber() {
 
 void resetCounter() {
   currentNumber = FONT_COUNT - 1;
+}
+
+// Display state
+
+boolean isDisplayOnHalt() {
+  return displayState == STATE_DISPLAY_HALT;
 }

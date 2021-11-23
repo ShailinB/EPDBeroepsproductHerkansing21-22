@@ -32,6 +32,18 @@ const int INTERVAL_OPENEN = 5000;
 unsigned long timer_open;
 const int INTERVAL_OPEN = 6000;
 
+// Timers stoplichten ======================================================================
+
+// Timer oranje licht
+unsigned long timer_oranjelicht;
+const int INTERVAL_ORANJELICHT = 3000;
+
+// Timer groen licht
+unsigned long timer_groenlicht;
+const int INTERVAL_GROENLICHT = 5000;
+
+// Timers stoplichten ======================================================================
+
 // Buzzer variables
 const int AMOUNTOFBEEPS = 4;
 
@@ -46,7 +58,7 @@ void kruispunt_setup() {
 }
 
 // Event trigger conditions =================================================================
-
+// Case 1: Crosswalk
 // Only when the dead time has passed, the system should listen to events again.
 boolean isSafetyProtocolCompleted() {
   return timerIsPassed(timer_dodetijd, INTERVAL_DODETIJD);
@@ -72,6 +84,21 @@ boolean isSequenceCompleted() {
   return isServoClosed();
 }
 
+// Case 2: Traffic junction
+// Its only save/allowed for traffic light to go on green, if the barrier is closed, the display is showing halt and the buzzer is signing halt.
+boolean isSafeToCrossCrosswalk() {
+  return isServoClosed() && isDisplayOnHalt() && isBuzzerOnHalt();
+//  return isServoClosed();
+}
+
+boolean requestLinkerStoplicht() {
+  return buttonClicked(getLinkerStoplicht());
+}
+
+boolean requestRechterStoplicht() {
+  return buttonClicked(getRechterStoplicht());
+}
+
 // Event trigger conditions ==================================================================
 
 void kruispunt() {
@@ -94,6 +121,22 @@ void kruispunt() {
         state_wacht_exit();
         state = STATE_OPENEN;
         state_openen_entry();
+      }
+
+      if(requestLinkerStoplicht() && isSafeToCrossCrosswalk()) {
+        stoplichtKnoppenState[LINKERSTOPLICHT] = true;
+        setLedOff(getRed());
+        state_wacht_exit();
+        state = STATE_GROEN_LICHT;
+        state_groen_entry();
+      }
+
+      if(requestRechterStoplicht() && isSafeToCrossCrosswalk()) {
+        stoplichtKnoppenState[RECHTERSTOPLICHT] = true;
+        setLedOff(getRed());
+        state_wacht_exit();
+        state = STATE_GROEN_LICHT;
+        state_groen_entry();
       }
 
       break;
@@ -128,9 +171,27 @@ void kruispunt() {
       break;
       //
       //        case STATE_ROOD_ORANJE_LICHT:
-      //        case STATE_GROEN_LICHT:
+    case STATE_GROEN_LICHT:
+      state_groen_do();
+
+      if(timerIsPassed(timer_groenlicht, INTERVAL_GROENLICHT)) {
+        state_groen_exit();
+        state = STATE_ORANJE_LICHT;
+        state_oranje_entry();
+      }
+      
+      break;
       //        case STATE_GROEN_KNIPPERLICHT:
-      //        case STATE_ORANJE_LICHT:
+    case STATE_ORANJE_LICHT:
+      state_oranje_do();
+
+      if(timerIsPassed(timer_oranjelicht, INTERVAL_ORANJELICHT)) {
+        state_oranje_exit();
+        state = STATE_DODE_TIJD;
+        state_dode_tijd_entry();
+      }
+      
+      break;
 
   }
 }
@@ -143,6 +204,7 @@ void state_dode_tijd_entry() {
   timer_dodetijd = timerReset();
 };
 void state_dode_tijd_do() {
+  setStoplichtenOpRood();
   segmentedDisplay_halt();
   buzzer_halt();
 };
@@ -150,12 +212,14 @@ void state_dode_tijd_exit() {};
 
 // STATE_WACHT
 void state_wacht_entry() {
+  resetStoplichtenStates();
   timer_wacht = timerReset();
 };
 void state_wacht_do() {
   if (buttonClicked(getOversteekKnop())) {
     verzoekOversteken = true;
   }
+ 
   segmentedDisplay_halt();
   buzzer_halt();
 };
@@ -208,9 +272,16 @@ void state_rood_oranje_do() {};
 void state_rood_oranje_exit() {};
 
 // STATE_GROEN
-void state_groen_entry() {};
-void state_groen_do() {};
-void state_groen_exit() {};
+void state_groen_entry() {
+  setLedOn(getGreen());
+  timer_groenlicht = timerReset();  
+};
+void state_groen_do() {
+  buzzer_halt();  
+};
+void state_groen_exit() {
+  setLedOff(getGreen());    
+};
 
 // STATE_GROEN_KNIPPERLICHT
 void state_groen_knipperlicht_entry() {};
@@ -218,8 +289,15 @@ void state_groen_knipperlicht_do() {};
 void state_groen_knipperlicht_exit() {};
 
 // STATE_ORANJE_LICHT
-void state_oranje_entry() {};
-void state_oranje_do() {};
-void state_oranje_exit() {};
+void state_oranje_entry() {
+  setLedOn(getAmber());
+  timer_oranjelicht = timerReset();    
+};
+void state_oranje_do() {
+  buzzer_halt();  
+};
+void state_oranje_exit() {
+  setLedOff(getAmber());  
+};
 
 // Entry-Do-Exit methods ========================================================

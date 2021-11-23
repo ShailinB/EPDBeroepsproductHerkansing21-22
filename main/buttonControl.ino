@@ -1,5 +1,12 @@
+
 const int BUTTON_COUNT = 4;
 const int BUTTON_PIN[BUTTON_COUNT] = {10,9,6,5};
+
+// Stoplicht knoppen
+const int LINKERSTOPLICHT = 0;
+const int RECHTERSTOPLICHT = 1;
+const int AANTAL_STOPLICHTEN = 2;
+boolean stoplichtKnoppenState[AANTAL_STOPLICHTEN];
 
 const int BUTTON_STATE_RELEASED = 0;
 const int BUTTON_STATE_CHECK_PRESSED = 1;
@@ -19,6 +26,7 @@ void buttonSetup() {
     buttonState[i] = BUTTON_STATE_RELEASED;
     button_Released_Entry(i);
   }
+  resetStoplichtenStates();
 }
 
 boolean buttonDown(int button) {
@@ -101,6 +109,14 @@ const int getRechterStoplicht() {
 
 const int getTestknop() {
   return 1;
+}
+
+// Setters
+
+void resetStoplichtenStates() {
+  for (int i = 0; i< AANTAL_STOPLICHTEN; i++) {
+    stoplichtKnoppenState[i] = false;
+  }
 }
 
 //----------------------------------------------------------------------------
