@@ -34,6 +34,14 @@ const int INTERVAL_OPEN = 6000;
 
 // Timers stoplichten ======================================================================
 
+// Timer rood-oranje licht
+unsigned long timer_roodoranjelicht;
+const int INTERVAL_ROODORANJELICHT = 1500;
+
+// Timer groen knipperen licht
+unsigned long timer_groenknipperlicht_licht;
+const int INTERVAL_GROENKNIPPERLICHT_LICHT = 1500;
+
 // Timer oranje licht
 unsigned long timer_oranjelicht;
 const int INTERVAL_ORANJELICHT = 3000;
@@ -88,7 +96,6 @@ boolean isSequenceCompleted() {
 // Its only save/allowed for traffic light to go on green, if the barrier is closed, the display is showing halt and the buzzer is signing halt.
 boolean isSafeToCrossCrosswalk() {
   return isServoClosed() && isDisplayOnHalt() && isBuzzerOnHalt();
-//  return isServoClosed();
 }
 
 boolean requestLinkerStoplicht() {
@@ -97,6 +104,18 @@ boolean requestLinkerStoplicht() {
 
 boolean requestRechterStoplicht() {
   return buttonClicked(getRechterStoplicht());
+}
+
+boolean inNetherlands() {
+  return getOntv_karakter() == 'n';
+}
+
+boolean inGermany() {
+  return getOntv_karakter() == 'd';
+}
+
+boolean inAustria() {
+  return getOntv_karakter() == 'o';
 }
 
 // Event trigger conditions ==================================================================
@@ -123,20 +142,31 @@ void kruispunt() {
         state_openen_entry();
       }
 
-      if(requestLinkerStoplicht() && isSafeToCrossCrosswalk()) {
-        stoplichtKnoppenState[LINKERSTOPLICHT] = true;
-        setLedOff(getRed());
-        state_wacht_exit();
-        state = STATE_GROEN_LICHT;
-        state_groen_entry();
+      if (requestLinkerStoplicht() && isSafeToCrossCrosswalk()) {
+          stoplichtKnoppenState[LINKERSTOPLICHT] = true;
+          setLedOff(getRed());
+          state_wacht_exit();
+        if (inNetherlands()) {
+          state = STATE_GROEN_LICHT;
+          state_groen_entry();
+        } else {
+          state = STATE_ROOD_ORANJE_LICHT;
+          state_rood_oranje_entry();
+        }
       }
 
-      if(requestRechterStoplicht() && isSafeToCrossCrosswalk()) {
+      if (requestRechterStoplicht() && isSafeToCrossCrosswalk()) {
         stoplichtKnoppenState[RECHTERSTOPLICHT] = true;
         setLedOff(getRed());
         state_wacht_exit();
-        state = STATE_GROEN_LICHT;
-        state_groen_entry();
+        
+        if (inNetherlands()) {
+          state = STATE_GROEN_LICHT;
+          state_groen_entry();
+        } else {
+          state = STATE_ROOD_ORANJE_LICHT;
+          state_rood_oranje_entry();
+        }
       }
 
       break;
@@ -169,28 +199,51 @@ void kruispunt() {
         state_dode_tijd_entry();
       }
       break;
-      //
-      //        case STATE_ROOD_ORANJE_LICHT:
+    
+    case STATE_ROOD_ORANJE_LICHT:
+      state_rood_oranje_do();
+
+      if (timerIsPassed(timer_roodoranjelicht, INTERVAL_ROODORANJELICHT)) {
+        state_rood_oranje_exit();
+        state = STATE_GROEN_LICHT;
+        state_groen_entry();
+      }
+      
+      break;
     case STATE_GROEN_LICHT:
       state_groen_do();
 
-      if(timerIsPassed(timer_groenlicht, INTERVAL_GROENLICHT)) {
-        state_groen_exit();
+      if (timerIsPassed(timer_groenlicht, INTERVAL_GROENLICHT)) {
+          state_groen_exit();
+        if(inNetherlands() || inGermany()) {
+          state = STATE_ORANJE_LICHT;
+          state_oranje_entry();
+        } else {
+          state = STATE_GROEN_KNIPPERLICHT;
+          state_groen_knipperlicht_entry();
+        }
+      }
+
+      break;
+    case STATE_GROEN_KNIPPERLICHT:
+      state_groen_knipperlicht_do();
+
+      if (timerIsPassed(timer_groenknipperlicht_licht, INTERVAL_GROENKNIPPERLICHT_LICHT)) {
+        state_groen_knipperlicht_exit();
         state = STATE_ORANJE_LICHT;
         state_oranje_entry();
       }
       
       break;
-      //        case STATE_GROEN_KNIPPERLICHT:
     case STATE_ORANJE_LICHT:
       state_oranje_do();
 
-      if(timerIsPassed(timer_oranjelicht, INTERVAL_ORANJELICHT)) {
+      if (timerIsPassed(timer_oranjelicht, INTERVAL_ORANJELICHT)) {
         state_oranje_exit();
         state = STATE_DODE_TIJD;
         state_dode_tijd_entry();
       }
-      
+
       break;
 
   }
@@ -219,7 +272,7 @@ void state_wacht_do() {
   if (buttonClicked(getOversteekKnop())) {
     verzoekOversteken = true;
   }
- 
+
   segmentedDisplay_halt();
   buzzer_halt();
 };
@@ -267,37 +320,51 @@ void state_sluiten_exit() {
 };
 
 // STATE_ROOD_ORANJE_LICHT
-void state_rood_oranje_entry() {};
+void state_rood_oranje_entry() {
+  timer_roodoranjelicht = timerReset();  
+  setLedOn(getRed());
+  setLedOn(getAmber());
+};
 void state_rood_oranje_do() {};
-void state_rood_oranje_exit() {};
+void state_rood_oranje_exit() {
+  setLedOff(getRed());
+  setLedOff(getAmber());  
+};
 
 // STATE_GROEN
 void state_groen_entry() {
   setLedOn(getGreen());
-  timer_groenlicht = timerReset();  
+  timer_groenlicht = timerReset();
 };
 void state_groen_do() {
-  buzzer_halt();  
+  buzzer_halt();
 };
 void state_groen_exit() {
-  setLedOff(getGreen());    
+  setLedOff(getGreen());
 };
 
 // STATE_GROEN_KNIPPERLICHT
-void state_groen_knipperlicht_entry() {};
-void state_groen_knipperlicht_do() {};
-void state_groen_knipperlicht_exit() {};
+void state_groen_knipperlicht_entry() {
+  timer_groenknipperlicht_licht = timerReset();
+  resetTimerGroenKnipperlicht();
+};
+void state_groen_knipperlicht_do() {
+  stoplicht_knipperen();
+};
+void state_groen_knipperlicht_exit() {
+  setLedOff(getGreen());
+};
 
 // STATE_ORANJE_LICHT
 void state_oranje_entry() {
   setLedOn(getAmber());
-  timer_oranjelicht = timerReset();    
+  timer_oranjelicht = timerReset();
 };
 void state_oranje_do() {
-  buzzer_halt();  
+  buzzer_halt();
 };
 void state_oranje_exit() {
-  setLedOff(getAmber());  
+  setLedOff(getAmber());
 };
 
 // Entry-Do-Exit methods ========================================================

@@ -9,6 +9,11 @@ const int RED = 0;
 const int AMBER = 1;
 const int GREEN = 2;
 
+// Timer groen knipperen licht
+unsigned long timer_knipperen;
+const int INTERVAL_KNIPPEREN = 100;
+boolean isGreenOn = true;
+
 void ledControlSetup() {
   for (int i = 0; i < LEDPINS_SIZE; i++) {
     pinMode(LEDPINS[i], OUTPUT);
@@ -92,6 +97,26 @@ void setLedOff(const int color) {
         ledControlSetLedOff(getRechter_GroenLicht());
       }
       break;
+  }
+}
+
+void stoplicht_knipperen() {
+  if(timerIsPassed(timer_knipperen, INTERVAL_KNIPPEREN)) {
+    timer_knipperen = timerReset();
+    blinkGroenLicht();
+  }
+}
+
+void resetTimerGroenKnipperlicht() {
+    timer_knipperen = timerReset();
+}
+
+void blinkGroenLicht() {
+  isGreenOn = !isGreenOn;
+  if(isGreenOn) {
+    setLedOn(getGreen());
+  } else {
+    setLedOff(getGreen());
   }
 }
 

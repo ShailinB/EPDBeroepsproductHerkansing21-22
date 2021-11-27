@@ -11,5 +11,6 @@ void vsSetup() {
 
 void vsLoop() {
   buttonLoop();
+  catchSerialCommand();
   kruispunt();
 }
