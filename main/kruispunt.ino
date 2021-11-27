@@ -15,6 +15,7 @@ const int STATE_ROOD_ORANJE_LICHT = 5;
 const int STATE_GROEN_LICHT = 6;
 const int STATE_GROEN_KNIPPERLICHT = 7;
 const int STATE_ORANJE_LICHT = 8;
+const int STATE_TEST = 9;
 
 // Timer dode tijd
 unsigned long timer_dodetijd;
@@ -106,6 +107,10 @@ boolean requestRechterStoplicht() {
   return buttonClicked(getRechterStoplicht());
 }
 
+boolean requestTestknop() {
+  return buttonClicked(getTestknop());
+}
+
 boolean inNetherlands() {
   return getOntv_karakter() == 'n';
 }
@@ -169,6 +174,12 @@ void kruispunt() {
         }
       }
 
+      if(requestTestknop()) {
+        setLedOff(getRed());
+        state_wacht_exit();
+        state = STATE_TEST;
+        state_test_entry();
+      }
       break;
     case STATE_OPENEN:
       state_openen_do();
@@ -245,7 +256,15 @@ void kruispunt() {
       }
 
       break;
+    case STATE_TEST:
+      state_test_do();
 
+//      if(testSequenceCompleted()) {
+//        state_test_exit();
+//        state = STATE_DODE_TIJD;
+//        state_dode_tijd_entry();
+//      }
+      break;
   }
 }
 
@@ -366,5 +385,14 @@ void state_oranje_do() {
 void state_oranje_exit() {
   setLedOff(getAmber());
 };
+
+void state_test_entry(){
+  resetTimerLedTesting();  
+}
+void state_test_do(){
+  Serial.println("Test Sequence running!");
+  stoplicht_test();
+}
+void state_test_exit(){}
 
 // Entry-Do-Exit methods ========================================================

@@ -14,6 +14,10 @@ unsigned long timer_knipperen;
 const int INTERVAL_KNIPPEREN = 100;
 boolean isGreenOn = true;
 
+unsigned long timer_ledTesting;
+const int INTERVAL_LEDTESTING = 150;
+int currentTestingLed = 0;
+
 void ledControlSetup() {
   for (int i = 0; i < LEDPINS_SIZE; i++) {
     pinMode(LEDPINS[i], OUTPUT);
@@ -101,19 +105,19 @@ void setLedOff(const int color) {
 }
 
 void stoplicht_knipperen() {
-  if(timerIsPassed(timer_knipperen, INTERVAL_KNIPPEREN)) {
+  if (timerIsPassed(timer_knipperen, INTERVAL_KNIPPEREN)) {
     timer_knipperen = timerReset();
     blinkGroenLicht();
   }
 }
 
 void resetTimerGroenKnipperlicht() {
-    timer_knipperen = timerReset();
+  timer_knipperen = timerReset();
 }
 
 void blinkGroenLicht() {
   isGreenOn = !isGreenOn;
-  if(isGreenOn) {
+  if (isGreenOn) {
     setLedOn(getGreen());
   } else {
     setLedOff(getGreen());
@@ -123,6 +127,23 @@ void blinkGroenLicht() {
 void setStoplichtenOpRood() {
   ledControlSetLedOn(getLinker_RoodLicht());
   ledControlSetLedOn(getRechter_RoodLicht());
+}
+
+void stoplicht_test() {
+  while (currentTestingLed <= LEDPINS_SIZE) {
+    if (timerIsPassed(timer_ledTesting, INTERVAL_LEDTESTING)) {
+      timer_ledTesting = timerReset();
+      digitalWrite(LEDPINS[currentTestingLed], HIGH);
+      currentTestingLed++;
+    }
+  }
+  ledControlAllLedOff();
+}
+
+void resetTimerLedTesting() {
+  timer_ledTesting = timerReset();
+  currentTestingLed = 0;
+  ledControlAllLedOff();
 }
 
 // Getters

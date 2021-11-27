@@ -99,6 +99,12 @@ void segmentedDisplay_aftellen() {
   }
 }
 
+void segmentedDisplay_test() {
+  while(timerIsPassed(timer_displayTesting, INTERVAL_DISPLAYTESTING)) {
+   shiftSetAllOn(); 
+  }
+}
+
 int getCurrentNumber() {
   return currentNumber;
 }
