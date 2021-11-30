@@ -259,11 +259,11 @@ void kruispunt() {
     case STATE_TEST:
       state_test_do();
 
-//      if(testSequenceCompleted()) {
-//        state_test_exit();
-//        state = STATE_DODE_TIJD;
-//        state_dode_tijd_entry();
-//      }
+      if(testSequenceCompleted()) {
+        state_test_exit();
+        state = STATE_DODE_TIJD;
+        state_dode_tijd_entry();
+      }
       break;
   }
 }
@@ -386,12 +386,10 @@ void state_oranje_exit() {
   setLedOff(getAmber());
 };
 
-void state_test_entry(){
-  resetTimerLedTesting();  
-}
+void state_test_entry(){}
 void state_test_do(){
   Serial.println("Test Sequence running!");
-  stoplicht_test();
+  testSequence(); 
 }
 void state_test_exit(){}
 
