@@ -35,6 +35,13 @@ int currentNumber = FONT_COUNT - 1;
 unsigned long timer_countdown;
 const int INTERVAL_COUNTDOWN = 1000;
 
+// Test completed?
+// Timer for countdown
+unsigned long timer_displayTesting;
+const int INTERVAL_DISPLAYTESTING = 1500;
+
+boolean testCompleted = false;
+
 //Functions
 void shiftRegisterSetup() {
   pinMode(PIN_ST_CP, OUTPUT);
@@ -99,9 +106,22 @@ void segmentedDisplay_aftellen() {
   }
 }
 
+void displayTestingSetup() {
+  timer_displayTesting = timerReset();
+  testCompleted = false;
+}
+
+boolean isDisplayTestingDone() {
+  return testCompleted;
+}
 void segmentedDisplay_test() {
-  while(timerIsPassed(timer_displayTesting, INTERVAL_DISPLAYTESTING)) {
-   shiftSetAllOn(); 
+  while(!testCompleted) {
+    shiftSetAllOn();
+    
+    if(timerIsPassed(timer_displayTesting, INTERVAL_DISPLAYTESTING)) {
+      timer_displayTesting = timerReset();
+      testCompleted = true;
+    }
   }
 }
 

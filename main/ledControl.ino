@@ -129,6 +129,10 @@ void setStoplichtenOpRood() {
   ledControlSetLedOn(getRechter_RoodLicht());
 }
 
+boolean isLedTestingDone() {
+  return !(currentTestingLed <= LEDPINS_SIZE);
+}
+
 void stoplicht_test() {
   while (currentTestingLed <= LEDPINS_SIZE) {
     if (timerIsPassed(timer_ledTesting, INTERVAL_LEDTESTING)) {
@@ -137,10 +141,9 @@ void stoplicht_test() {
       currentTestingLed++;
     }
   }
-  ledControlAllLedOff();
 }
 
-void resetTimerLedTesting() {
+void ledTestingSetup() {
   timer_ledTesting = timerReset();
   currentTestingLed = 0;
   ledControlAllLedOff();

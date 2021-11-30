@@ -17,7 +17,7 @@ void testSequence() {
     case STATE_VERKEERSLICHTEN:
       state_verkeerslichten_do();
 
-      if() {
+      if(isLedTestingDone()) {
         state_verkeerslichten_exit();
         state = STATE_OVERSTEEKDISPLAY;
         state_oversteekdisplay_entry();
@@ -26,7 +26,7 @@ void testSequence() {
     case STATE_OVERSTEEKDISPLAY:
       state_oversteekdisplay_do();
 
-      if() {
+      if(isDisplayTestingDone()) {
         state_oversteekdisplay_exit();
         state = STATE_BUZZER;
         state_buzzer_entry();
@@ -64,14 +64,26 @@ void testSequence() {
 // Entry-Do-Exit methods
 
 // Verkeerslichten
-void state_verkeerslichten_entry() {}
-void state_verkeerslichten_do() {}
-void state_verkeerslichten_exit() {}
+void state_verkeerslichten_entry() {
+  ledTestingSetup();
+}
+void state_verkeerslichten_do() {
+  stoplicht_test();  
+}
+void state_verkeerslichten_exit() {
+  ledControlAllLedOff();  
+}
 
 // Oversteekdisplay
-void state_oversteekdisplay_entry() {}
-void state_oversteekdisplay_do() {}
-void state_oversteekdisplay_exit() {}
+void state_oversteekdisplay_entry() {
+  shiftSetAllOff();  
+}
+void state_oversteekdisplay_do() {
+    
+}
+void state_oversteekdisplay_exit() {
+  shiftSetAllOff();  
+}
 
 // Buzzer
 void state_buzzer_entry() {}
