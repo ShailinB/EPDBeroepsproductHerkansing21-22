@@ -1,6 +1,6 @@
 
 // State tracker
-int state;
+int teststate;
 
 // States
 const int STATE_VERKEERSLICHTEN = 0;
@@ -13,13 +13,13 @@ const int STATE_SLAGBOOM_SLUITEN = 4;
 boolean isSequenceDone = false;
 
 void testSequence() {
-  switch(state) {
+  switch(teststate) {
     case STATE_VERKEERSLICHTEN:
       state_verkeerslichten_do();
 
       if(isLedTestingDone()) {
         state_verkeerslichten_exit();
-        state = STATE_OVERSTEEKDISPLAY;
+        teststate = STATE_OVERSTEEKDISPLAY;
         state_oversteekdisplay_entry();
       }
       break;
@@ -28,18 +28,18 @@ void testSequence() {
 
       if(isDisplayTestingDone()) {
         state_oversteekdisplay_exit();
-        state = STATE_BUZZER;
+        teststate = STATE_BUZZER;
         state_buzzer_entry();
       }
       break;
     case STATE_BUZZER:
       state_buzzer_do();
 
-      if() {
-        state_buzzer_exit();
-        state = STATE_SLAGBOOM_OPENEN;
-        state_slagboom_openen_entry();
-      }
+//      if() {
+//        state_buzzer_exit();
+//        state = STATE_SLAGBOOM_OPENEN;
+//        state_slagboom_openen_entry();
+//      }
       
       break;
     case STATE_SLAGBOOM_OPENEN:
@@ -47,16 +47,16 @@ void testSequence() {
 
       if(isServoOpen()) {
         state_slagboom_openen_exit();
-        state = STATE_SLAGBOOM_SLUITEN;
+        teststate = STATE_SLAGBOOM_SLUITEN;
         state_slagboom_sluiten_entry();
       }
       break;
     case STATE_SLAGBOOM_SLUITEN:
       state_slagboom_sluiten_do();
       
-      if(isServoClosed()) {
-        isSequeneDone = true;
-      }
+//      if(isServoClosed()) {
+//        isSequeneDone = true;
+//      }
       break;
   }
 }
@@ -76,10 +76,10 @@ void state_verkeerslichten_exit() {
 
 // Oversteekdisplay
 void state_oversteekdisplay_entry() {
-  shiftSetAllOff();  
+  displayTestingSetup();  
 }
 void state_oversteekdisplay_do() {
-    
+  segmentedDisplay_test();  
 }
 void state_oversteekdisplay_exit() {
   shiftSetAllOff();  

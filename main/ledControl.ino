@@ -144,9 +144,9 @@ void stoplicht_test() {
 }
 
 void ledTestingSetup() {
+  ledControlAllLedOff();
   timer_ledTesting = timerReset();
   currentTestingLed = 0;
-  ledControlAllLedOff();
 }
 
 // Getters

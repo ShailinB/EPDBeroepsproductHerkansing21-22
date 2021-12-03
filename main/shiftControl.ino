@@ -109,6 +109,7 @@ void segmentedDisplay_aftellen() {
 void displayTestingSetup() {
   timer_displayTesting = timerReset();
   testCompleted = false;
+  shiftSetAllOff();
 }
 
 boolean isDisplayTestingDone() {
