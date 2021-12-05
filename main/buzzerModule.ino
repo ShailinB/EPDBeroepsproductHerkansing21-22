@@ -22,6 +22,11 @@ unsigned long timer_buzzer;
 // Rhythm variables
 int buzzCount;
 
+// Testing
+boolean buzzTest = false;
+unsigned long timer_buzzTest;
+const int INTERVAL_BUZZTEST = 3000;
+
 void buzzerSetup() {
   pinMode(BUZZER_PIN, OUTPUT);
   timer_buzzer = timerSetup(INTERVAL_DOORLOPEN);
@@ -61,6 +66,27 @@ void buzzer_lopen() {
     tone(BUZZER_PIN, VOLUME);
     timer_buzzer = timerReset();
   }
+}
+
+boolean isBuzzTestCompleted() {
+  return buzzTest;
+}
+
+void buzzTest_setup() {
+  timer_buzzTest = timerReset();
+  buzzTest = false;
+  noTone(BUZZER_PIN);
+}
+void buzzer_test() {
+  while(!buzzTest) {
+    tone(BUZZER_PIN, VOLUME);
+    if(timerIsPassed(timer_buzzTest, INTERVAL_BUZZTEST)) {
+      Serial.println("Im here");
+      timer_buzzTest = timerReset();
+      buzzTest = true;
+    }
+  }
+  noTone(BUZZER_PIN);
 }
 
 void resetBuzzerCount() {

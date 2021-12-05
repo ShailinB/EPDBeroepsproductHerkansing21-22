@@ -56,22 +56,28 @@ void setLedOn(const int color) {
   switch (color) {
     case RED:
       if (stoplichtKnoppenState[LINKERSTOPLICHT]) {
+        Serial.println("Linker stoplicht: ROOD");
         ledControlSetLedOn(getLinker_RoodLicht());
       } else if (stoplichtKnoppenState[RECHTERSTOPLICHT]) {
+        Serial.println("Rechter stoplicht: ROOD");
         ledControlSetLedOn(getRechter_RoodLicht());
       }
       break;
     case AMBER:
       if (stoplichtKnoppenState[LINKERSTOPLICHT]) {
+        Serial.println("Linker stoplicht: ORANJE");
         ledControlSetLedOn(getLinker_OranjeLicht());
       } else if (stoplichtKnoppenState[RECHTERSTOPLICHT]) {
+        Serial.println("Rechter stoplicht: ORANJE");
         ledControlSetLedOn(getRechter_OranjeLicht());
       }
       break;
     case GREEN:
       if (stoplichtKnoppenState[LINKERSTOPLICHT]) {
+        Serial.println("Linker stoplicht: GROEN");
         ledControlSetLedOn(getLinker_GroenLicht());
       } else if (stoplichtKnoppenState[RECHTERSTOPLICHT]) {
+        Serial.println("Rechter stoplicht: GROEN");
         ledControlSetLedOn(getRechter_GroenLicht());
       }
       break;
@@ -82,22 +88,28 @@ void setLedOff(const int color) {
   switch (color) {
     case RED:
       if (stoplichtKnoppenState[LINKERSTOPLICHT]) {
+        Serial.println("Linker stoplicht: ROOD");
         ledControlSetLedOff(getLinker_RoodLicht());
       } else if (stoplichtKnoppenState[RECHTERSTOPLICHT]) {
+        Serial.println("Rechter stoplicht: ROOD");
         ledControlSetLedOff(getRechter_RoodLicht());
       }
       break;
     case AMBER:
       if (stoplichtKnoppenState[LINKERSTOPLICHT]) {
+        Serial.println("Linker stoplicht: ORANJE");
         ledControlSetLedOff(getLinker_OranjeLicht());
       } else if (stoplichtKnoppenState[RECHTERSTOPLICHT]) {
+        Serial.println("Rechter stoplicht: ORANJE");
         ledControlSetLedOff(getRechter_OranjeLicht());
       }
       break;
     case GREEN:
       if (stoplichtKnoppenState[LINKERSTOPLICHT]) {
+        Serial.println("Linker stoplicht: GROEN");
         ledControlSetLedOff(getLinker_GroenLicht());
       } else if (stoplichtKnoppenState[RECHTERSTOPLICHT]) {
+        Serial.println("Rechter stoplicht: GROEN");
         ledControlSetLedOff(getRechter_GroenLicht());
       }
       break;

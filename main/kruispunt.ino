@@ -259,11 +259,11 @@ void kruispunt() {
     case STATE_TEST:
       state_test_do();
 
-//      if(testSequenceCompleted()) {
-//        state_test_exit();
-//        state = STATE_DODE_TIJD;
-//        state_dode_tijd_entry();
-//      }
+      if(testSequenceCompleted()) {
+        state_test_exit();
+        state = STATE_DODE_TIJD;
+        state_dode_tijd_entry();
+      }
       break;
   }
 }
@@ -272,6 +272,7 @@ void kruispunt() {
 
 // STATE_DODE_TIJD
 void state_dode_tijd_entry() {
+  Serial.println("Entered state: DODE TIJD");
   servoStop();
   timer_dodetijd = timerReset();
 };
@@ -284,6 +285,7 @@ void state_dode_tijd_exit() {};
 
 // STATE_WACHT
 void state_wacht_entry() {
+  Serial.println("Entered state: WACHT");
   resetStoplichtenStates();
   timer_wacht = timerReset();
 };
@@ -301,6 +303,7 @@ void state_wacht_exit() {
 
 // STATE_OPENEN
 void state_openen_entry() {
+  Serial.println("Entered state: OPENEN");
   servoStart();
   timer_openen = timerReset();
 };
@@ -315,6 +318,7 @@ void state_openen_exit() {
 
 // STATE_OPEN
 void state_open_entry() {
+  Serial.println("Entered state: OPEN");
   timer_open = timerReset();
 };
 void state_open_do() {
@@ -327,6 +331,7 @@ void state_open_exit() {
 
 // STATE_SLUITEN
 void state_sluiten_entry() {
+  Serial.println("Entered state: SLUITEN");
   servoStart();
 };
 void state_sluiten_do() {
@@ -340,6 +345,7 @@ void state_sluiten_exit() {
 
 // STATE_ROOD_ORANJE_LICHT
 void state_rood_oranje_entry() {
+  Serial.println("Entered state: ROOD-ORANJE");
   timer_roodoranjelicht = timerReset();  
   setLedOn(getRed());
   setLedOn(getAmber());
@@ -352,6 +358,7 @@ void state_rood_oranje_exit() {
 
 // STATE_GROEN
 void state_groen_entry() {
+  Serial.println("Entered state: GROEN");
   setLedOn(getGreen());
   timer_groenlicht = timerReset();
 };
@@ -364,6 +371,7 @@ void state_groen_exit() {
 
 // STATE_GROEN_KNIPPERLICHT
 void state_groen_knipperlicht_entry() {
+  Serial.println("Entered state: GROEN KNIPPERLICHT");
   timer_groenknipperlicht_licht = timerReset();
   resetTimerGroenKnipperlicht();
 };
@@ -376,6 +384,7 @@ void state_groen_knipperlicht_exit() {
 
 // STATE_ORANJE_LICHT
 void state_oranje_entry() {
+  Serial.println("Entered state: ORANJE");
   setLedOn(getAmber());
   timer_oranjelicht = timerReset();
 };
@@ -387,12 +396,14 @@ void state_oranje_exit() {
 };
 
 void state_test_entry(){
+  Serial.println("Entered state: TEST");
   state_verkeerslichten_entry();  
 }
 void state_test_do(){
-  Serial.println("Test Sequence running!");
   testSequence(); 
 }
-void state_test_exit(){}
+void state_test_exit(){
+  Serial.println("Exiting state: TEST");  
+}
 
 // Entry-Do-Exit methods ========================================================

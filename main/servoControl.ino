@@ -49,7 +49,7 @@ boolean isServoClosed() {
 
 void servoOpen() {
   if (timerIsPassed(timer_slagboom, STEPSPEED)) {
-    timer_slagboom = timerReset();
+    resetTimerServo();
     servoWrite(servoCurrentAngle);
     servoCurrentAngle++;
   }
@@ -57,12 +57,15 @@ void servoOpen() {
 
 void servoClose() {
   if (timerIsPassed(timer_slagboom, STEPSPEED)) {
-    timer_slagboom = timerReset();
+    resetTimerServo();
     servoWrite(servoCurrentAngle);
     servoCurrentAngle--;
   }
 }
 
+void resetTimerServo() {
+  timer_slagboom = timerReset();
+}
 int getServoAngle() {
   return servo.read();
 }
